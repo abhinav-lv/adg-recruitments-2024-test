@@ -1,95 +1,56 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { Button, Flex, Image } from "@chakra-ui/react";
+import { UserAuth } from "./context/AuthContext";
+import GoogleIcon from "@mui/icons-material/Google";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Loader from "./components/Loader";
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+export default function App() {
+  const { googleSignIn, user } = UserAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user !== null && user !== "loading") router.push("/dashboard");
+  }, [user]);
+
+  const handleSignIn = async () => {
+    try {
+      await googleSignIn();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return user === "loading" || user !== null ? (
+    <Loader />
+  ) : (
+    <Flex h="100vh" w="100%">
+      <Image
+        w="40%"
+        h="100%"
+        src="/landing-image.svg"
+        objectFit="cover"
+        display={["none", "none", "initial"]}
+      />
+      <Flex
+        w={["100%", "100%", "60%"]}
+        h="100%"
+        bgImage="/background.png"
+        bgSize="cover"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Flex bg="rgba(0,0,0,0.4)" borderRadius="1rem" p="2rem">
+          <Button
+            onClick={handleSignIn}
+            leftIcon={<GoogleIcon />}
+            colorScheme="purple"
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+            Sign in with Google
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }
