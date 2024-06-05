@@ -25,7 +25,7 @@ export default function NavBar() {
       bg="rgba(100, 0, 255, 0.7)"
       alignItems="center"
     >
-      <Heading>ADG Recruitments '24</Heading>
+      <Heading>{`ADG Recruitments '24`}</Heading>
       <Popover>
         <PopoverTrigger>
           <Flex
