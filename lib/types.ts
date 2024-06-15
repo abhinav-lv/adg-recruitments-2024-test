@@ -42,3 +42,27 @@ export interface IMCQ {
     options: { optionId: number; optionText: string }[];
   };
 }
+
+export function instanceOfIMCQ(object: IMCQ | ISubjective): object is IMCQ {
+  return "options" in object.question;
+}
+
+export interface ITestStatus {
+  isGivingTest: boolean;
+  questions: (IMCQ | ISubjective)[];
+  testStartEpoch: number;
+  isTestCompleted: boolean;
+  currentQuestion: number;
+}
+
+export interface IResponseMCQ {
+  questionId: string;
+  domain: ManagementDomain;
+  chosenOptionId: number;
+}
+
+export interface IResponseSub {
+  questionId: string;
+  domain: ManagementDomain;
+  responseText: string;
+}

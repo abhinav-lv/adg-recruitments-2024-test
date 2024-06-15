@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Heading } from "@chakra-ui/react";
+import { Button, Flex, Heading, Icon, Link } from "@chakra-ui/react";
 import { UserAuth } from "../context/AuthContext";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,13 +9,14 @@ import DomainCard from "../components/DomainCard";
 import { Domain } from "@/lib/types";
 import { getSubmittedTechnicalDomains } from "@/lib/functions";
 import { User } from "firebase/auth";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import useCheckTest from "../hooks/useCheckTest";
 
 const getSubmissions = async (
   user: User,
   setDomainsToBeGrayed: Dispatch<SetStateAction<"loading" | Domain[]>>
 ) => {
   const technicalDomains = await getSubmittedTechnicalDomains(user);
-  console.log(technicalDomains);
   setDomainsToBeGrayed(technicalDomains);
 };
 
@@ -25,6 +26,14 @@ export default function Dashboard() {
   const [domainsToBeGrayed, setDomainsToBeGrayed] = useState<
     Domain[] | "loading"
   >("loading");
+
+  // check for ongoing test
+  const { testStatus } = useCheckTest();
+  useEffect(() => {
+    if (testStatus === "loading" || testStatus === null) return;
+    if (testStatus.isGivingTest) router.push("/management/test");
+    else router.push("/dashboard");
+  }, [testStatus]);
 
   useEffect(() => {
     if (user === null) {
@@ -36,7 +45,9 @@ export default function Dashboard() {
 
   return user === "loading" ||
     user === null ||
-    domainsToBeGrayed === "loading" ? (
+    domainsToBeGrayed === "loading" ||
+    testStatus === "loading" ||
+    (testStatus !== null && testStatus.isGivingTest) ? (
     <Loader />
   ) : (
     <Flex
@@ -57,6 +68,22 @@ export default function Dashboard() {
               toBeGrayed={domainsToBeGrayed.includes(domain)}
             />
           ))}
+        </Flex>
+        <Heading color="#9FB4B6" mt="2rem">
+          Management Domain
+        </Heading>
+        <Flex mt="1.5rem">
+          <Link textDecor="none" href="/management">
+            <Button
+              isDisabled={testStatus?.isTestCompleted ?? false}
+              bg="brand.btnBg"
+              _hover={{ bg: "brand.btnBgHover" }}
+              color="brand.gray"
+              leftIcon={<ManageAccountsIcon />}
+            >
+              Start Management Task
+            </Button>
+          </Link>
         </Flex>
       </Flex>
     </Flex>

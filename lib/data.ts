@@ -1,4 +1,4 @@
-import { Domain } from "./types";
+import { Domain, ManagementDomain } from "./types";
 
 export const domainToName: { [key in Domain]: string } = {
   web: "Web",
@@ -19,4 +19,13 @@ export const domainToTaskLink: { [key in Domain]: string } = {
     "https://drive.google.com/file/d/1V7Gx7o_3utZLN0u2ZWCH_XWytxRnDie8/preview",
   design:
     "https://drive.google.com/file/d/1f0lDxV9rkZ4k8nwMq28-kxrydA_ic7PR/preview",
+};
+
+export const managementDomainToTagColorScheme: {
+  [key in ManagementDomain]: string;
+} = {
+  sponsorship: "red",
+  publicity: "green",
+  general: "blue",
+  operations: "yellow",
 };

@@ -3,6 +3,7 @@ import Loader from "@/app/components/Loader";
 import NavBar from "@/app/components/NavBar";
 import TextInput from "@/app/components/TextInput";
 import { UserAuth } from "@/app/context/AuthContext";
+import useCheckTest from "@/app/hooks/useCheckTest";
 import { domainToName, domainToTaskLink } from "@/lib/data";
 import {
   getSubmittedTechnicalDomains,
@@ -42,6 +43,19 @@ export default function DomainPage({ params }: { params: { domain: string } }) {
   >("loading");
   const [linkError, setLinkError] = useState({ status: false, message: "" });
 
+  // check for ongoing test
+  const { testStatus } = useCheckTest();
+  useEffect(() => {
+    if (
+      testStatus === "loading" ||
+      testStatus === null ||
+      testStatus.isTestCompleted
+    )
+      return;
+    if (testStatus.isGivingTest) router.push("/management/test");
+    else router.push("/dashboard");
+  }, [testStatus]);
+
   useEffect(() => {
     if (!(domain in Domain)) router.push("/dashboard");
   }, []);
@@ -68,11 +82,10 @@ export default function DomainPage({ params }: { params: { domain: string } }) {
     if (user === null || user === "loading") return;
     setSubmitLoading(true);
     try {
-      const success = await writeDataToDatabase(
+      await writeDataToDatabase(
         `/users/${user.uid}/responses/technicalDomain/${domain}`,
         { assignmentLink }
       );
-      console.log({ "Data to realtime": success });
       router.push("/dashboard");
       setSubmitLoading(false);
     } catch (err) {
@@ -85,7 +98,9 @@ export default function DomainPage({ params }: { params: { domain: string } }) {
     user === null ||
     !(domain in Domain) ||
     domainsToBeGrayed === "loading" ||
-    domainsToBeGrayed.includes(domain) ? (
+    domainsToBeGrayed.includes(domain) ||
+    testStatus === "loading" ||
+    (testStatus !== null && testStatus.isGivingTest) ? (
     <Loader />
   ) : (
     <Flex

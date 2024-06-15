@@ -1,7 +1,16 @@
 import { User } from "firebase/auth";
 import { database } from "./firebase/config";
-import { Domain } from "./types";
+import {
+  Domain,
+  IMCQ,
+  IResponseMCQ,
+  IResponseSub,
+  ISubjective,
+  ITestStatus,
+  ManagementDomain,
+} from "./types";
 import { child, ref, get, set } from "firebase/database";
+import { Dispatch, SetStateAction } from "react";
 
 const dbRef = ref(database);
 
@@ -63,6 +72,64 @@ export async function getSubmittedTechnicalDomains(
     }
   );
   await Promise.all(checkDomainSubmissionPromises);
-  console.log({ submittedDomains });
   return submittedDomains;
+}
+
+export function getShuffledRandomQuestions(
+  questions: (IMCQ | ISubjective)[]
+): (IMCQ | ISubjective)[] {
+  const generalQuestions = questions.filter(
+    (q) => q.domain === ManagementDomain.general
+  );
+  const nonGeneralQuestions = questions.filter(
+    (q) => q.domain !== ManagementDomain.general
+  );
+  const shuffledNonGeneralQuestions = nonGeneralQuestions.sort(
+    () => 0.5 - Math.random()
+  );
+  const randomNonGeneralQuestions = shuffledNonGeneralQuestions.slice(0, 5);
+  const combinedQuestions = [...generalQuestions, ...randomNonGeneralQuestions];
+  const shuffledCombinedQuestions = combinedQuestions.sort(
+    () => 0.5 - Math.random()
+  );
+  return shuffledCombinedQuestions;
+}
+
+export function getTimeDifferenceInMinutes(
+  epoch1: number,
+  epoch2: number
+): number {
+  const differenceInMilliseconds = Math.abs(epoch1 - epoch2);
+  const differenceInMinutes = differenceInMilliseconds / (1000 * 60);
+  return differenceInMinutes;
+}
+
+export function getTimeRemainingInTest(testStatus: ITestStatus) {
+  return 45 - getTimeDifferenceInMinutes(testStatus.testStartEpoch, Date.now());
+}
+
+export async function saveResponse(
+  user: User,
+  response: IResponseMCQ | IResponseSub
+) {
+  try {
+    await writeDataToDatabase(
+      `users/${user.uid}/responses/managementDomain/${response.questionId}`,
+      response
+    );
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+export async function updateTestStatus(user: User, testStatus: ITestStatus) {
+  try {
+    await writeDataToDatabase(`users/${user.uid}/testStatus`, testStatus);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 }

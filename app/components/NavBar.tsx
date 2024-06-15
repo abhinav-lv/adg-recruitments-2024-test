@@ -12,9 +12,10 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  Input,
+  Image,
   Icon,
   Avatar,
+  Link,
 } from "@chakra-ui/react";
 import { Menu } from "@mui/icons-material";
 import { UserAuth } from "../context/AuthContext";
@@ -30,49 +31,60 @@ export default function NavBar() {
   ) : (
     <Flex
       p="1rem 2rem"
-      justifyContent="space-between"
-      bg="rgba(100, 0, 255, 0.7)"
+      bg="brand.blackAlpha"
       alignItems="center"
+      color="brand.violet"
     >
-      <Heading>{`ADG Recruitments '24`}</Heading>
+      <Link textDecor="none" href="/dashboard">
+        <Image w="4rem" src={"/ADG.jpg"} borderRadius="10px" />
+      </Link>
+      <Heading ml="1rem">{`ADG Domain Selections '24`}</Heading>
       <Flex
         p="0.5rem"
-        _hover={{ bg: "rgba(0,0,0,0.5)", transition: "all 100ms" }}
+        _hover={{ bg: "brand.blackAlpha", transition: "all 100ms" }}
         cursor="pointer"
         borderRadius="8px"
+        onClick={onOpen}
+        ml="auto"
       >
-        <Icon as={Menu} onClick={onOpen} color="white" />
+        <Icon as={Menu} color="white" />
       </Flex>
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton mt="0.5rem" />
-          <DrawerHeader>Menu</DrawerHeader>
+        <DrawerContent bg="brand.menuBg" color="brand.menuTxt">
+          <DrawerCloseButton mt="1.5rem" />
+          <DrawerHeader mt="1rem">Menu</DrawerHeader>
 
           <DrawerBody p="0%">
             <Flex flexDir="column" w="100%" p="1rem" justifyContent="center">
               <Flex
-                gap="0.5rem"
+                mt="1rem"
                 alignItems="center"
-                p="0.5rem"
+                justifyContent="space-between"
+                p="1rem"
                 borderRadius="8px"
-                bg="rgba(0,0,0,0.2)"
+                bg="brand.violet"
+                color="brand.gray"
               >
+                <Text fontWeight="600">{user.displayName}</Text>
                 <Avatar size="sm" src={user.photoURL || ""} />
-                <Text>{user.displayName}</Text>
               </Flex>
             </Flex>
           </DrawerBody>
 
           <DrawerFooter>
             <Flex flexDir="column" w="100%" gap="1rem">
-              <Button
-                onClick={() => router.push("/dashboard")}
-                w="100%"
-                colorScheme="blue"
-              >
-                Go to dashboard
-              </Button>
+              <Link textDecor="none" href="/dashboard">
+                <Button
+                  color="brand.menuTxt"
+                  onClick={() => router.push("/dashboard")}
+                  w="100%"
+                  variant="outline"
+                  _hover={{ bg: "brand.menuTxt", color: "black" }}
+                >
+                  Go to dashboard
+                </Button>
+              </Link>
               <Button onClick={logOut} w="100%" colorScheme="red">
                 Log Out
               </Button>

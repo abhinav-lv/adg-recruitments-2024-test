@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { fonts } from "./fonts";
 
 export const metadata: Metadata = {
-  title: "ADG Recruitments '24",
-  description: "Recruitments Portal for ADG's 2024 recruits",
+  title: "ADG Domain Selections '24",
+  description: "Domain Selections Portal for ADG's 2024 recruits",
 };
 
 export default function RootLayout({
@@ -13,8 +14,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body style={{ backgroundColor: "black" }}>
+    <html lang="en" className={fonts.rubik.variable}>
+      <body
+        style={{
+          backgroundColor: "black",
+          backgroundImage: "url(/background.png)",
+          backgroundSize: "cover",
+        }}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -1,5 +1,5 @@
 "use client";
-import { Button, Flex, Image } from "@chakra-ui/react";
+import { Button, Flex, Heading, Image } from "@chakra-ui/react";
 import { UserAuth } from "./context/AuthContext";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useRouter } from "next/navigation";
@@ -41,11 +41,22 @@ export default function App() {
         alignItems="center"
         justifyContent="center"
       >
-        <Flex bg="rgba(0,0,0,0.4)" borderRadius="1rem" p="2rem">
+        <Flex
+          bg="rgba(0,0,0,0.4)"
+          borderRadius="1rem"
+          p="2rem"
+          flexDir="column"
+          alignItems="center"
+        >
+          <Image w="8rem" src="/ADG.jpg" />
+          <Heading color="brand.gray">ADG-VIT</Heading>
           <Button
+            mt="2rem"
             onClick={handleSignIn}
             leftIcon={<GoogleIcon />}
-            colorScheme="purple"
+            bg="brand.btnBg"
+            _hover={{ bg: "brand.btnBgHover" }}
+            color="brand.gray"
           >
             Sign in with Google
           </Button>

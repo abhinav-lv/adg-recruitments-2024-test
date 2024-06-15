@@ -6,7 +6,6 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
-  User,
 } from "firebase/auth";
 import { IAuthContext } from "@/lib/types";
 
