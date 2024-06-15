@@ -15,6 +15,30 @@ export enum Domain {
   design = "design",
 }
 
+export enum ManagementDomain {
+  sponsorship = "sponsorship",
+  publicity = "publicity",
+  operations = "operations",
+  general = "general",
+}
+
 export type IDomainIcons = {
   [key in Domain]?: any;
 };
+
+export interface ISubjective {
+  questionId: string;
+  domain: ManagementDomain;
+  question: {
+    questionText: string;
+  };
+}
+
+export interface IMCQ {
+  questionId: string;
+  domain: ManagementDomain;
+  question: {
+    questionText: string;
+    options: { optionId: number; optionText: string }[];
+  };
+}

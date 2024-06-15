@@ -10,7 +10,7 @@ export const domainToName: { [key in Domain]: string } = {
 };
 
 export const domainToTaskLink: { [key in Domain]: string } = {
-  web: "",
+  web: "https://drive.google.com/file/d/12BvVlaVhXH1RSDA4XazcbJUIKWTm61RP/preview",
   ios: "https://drive.google.com/file/d/1Gf4TuzrLt1ydwEnPHyZC1A2OVBi0-664/preview",
   android:
     "https://drive.google.com/file/d/1JmC-8S-qovt8bvrUWdyWckfXGRXLlUof/preview",

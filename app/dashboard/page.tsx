@@ -1,13 +1,23 @@
 "use client";
 import { Flex, Heading } from "@chakra-ui/react";
 import { UserAuth } from "../context/AuthContext";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "../components/Loader";
 import NavBar from "../components/NavBar";
 import DomainCard from "../components/DomainCard";
 import { Domain } from "@/lib/types";
-import { grayOutDomains } from "@/lib/functions";
+import { getSubmittedTechnicalDomains } from "@/lib/functions";
+import { User } from "firebase/auth";
+
+const getSubmissions = async (
+  user: User,
+  setDomainsToBeGrayed: Dispatch<SetStateAction<"loading" | Domain[]>>
+) => {
+  const technicalDomains = await getSubmittedTechnicalDomains(user);
+  console.log(technicalDomains);
+  setDomainsToBeGrayed(technicalDomains);
+};
 
 export default function Dashboard() {
   const { user } = UserAuth();
@@ -21,7 +31,7 @@ export default function Dashboard() {
       router.push("/");
       return;
     }
-    if (user !== "loading") grayOutDomains(user, setDomainsToBeGrayed);
+    if (user !== "loading") getSubmissions(user, setDomainsToBeGrayed);
   }, [user]);
 
   return user === "loading" ||

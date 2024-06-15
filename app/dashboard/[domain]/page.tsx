@@ -4,22 +4,31 @@ import NavBar from "@/app/components/NavBar";
 import TextInput from "@/app/components/TextInput";
 import { UserAuth } from "@/app/context/AuthContext";
 import { domainToName, domainToTaskLink } from "@/lib/data";
-import { db } from "@/lib/firebase/config";
-import { grayOutDomains } from "@/lib/functions";
+import {
+  getSubmittedTechnicalDomains,
+  writeDataToDatabase,
+} from "@/lib/functions";
 import { Domain } from "@/lib/types";
 import {
   Button,
   Flex,
   FormControl,
   FormErrorMessage,
-  Input,
   ListItem,
   OrderedList,
   Text,
 } from "@chakra-ui/react";
-import { doc, setDoc } from "firebase/firestore";
+import { User } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+
+const getSubmissions = async (
+  user: User,
+  setDomainsToBeGrayed: Dispatch<SetStateAction<"loading" | Domain[]>>
+) => {
+  const technicalDomains = await getSubmittedTechnicalDomains(user);
+  setDomainsToBeGrayed(technicalDomains);
+};
 
 export default function DomainPage({ params }: { params: { domain: string } }) {
   const { user } = UserAuth();
@@ -39,7 +48,7 @@ export default function DomainPage({ params }: { params: { domain: string } }) {
 
   useEffect(() => {
     if (user === null) router.push("/");
-    else if (user !== "loading") grayOutDomains(user, setDomainsToBeGrayed);
+    else if (user !== "loading") getSubmissions(user, setDomainsToBeGrayed);
   }, [user]);
 
   useEffect(() => {
@@ -59,7 +68,11 @@ export default function DomainPage({ params }: { params: { domain: string } }) {
     if (user === null || user === "loading") return;
     setSubmitLoading(true);
     try {
-      await setDoc(doc(db, user.uid, domain), { assignmentLink });
+      const success = await writeDataToDatabase(
+        `/users/${user.uid}/responses/technicalDomain/${domain}`,
+        { assignmentLink }
+      );
+      console.log({ "Data to realtime": success });
       router.push("/dashboard");
       setSubmitLoading(false);
     } catch (err) {

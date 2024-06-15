@@ -3,18 +3,27 @@ import {
   Flex,
   Heading,
   Text,
-  Avatar,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
   Button,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  Input,
+  Icon,
+  Avatar,
 } from "@chakra-ui/react";
+import { Menu } from "@mui/icons-material";
 import { UserAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
   const { user, logOut } = UserAuth();
+  const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return user === null || user === "loading" ? (
     <></>
@@ -26,35 +35,51 @@ export default function NavBar() {
       alignItems="center"
     >
       <Heading>{`ADG Recruitments '24`}</Heading>
-      <Popover>
-        <PopoverTrigger>
-          <Flex
-            alignItems="center"
-            color="white"
-            bg="rgba(0,0,0,0.4)"
-            p="0.5rem 1rem"
-            borderRadius="1rem"
-            gap="1rem"
-            cursor="pointer"
-            _hover={{ bg: "rgba(0,0,0,0.6)" }}
-          >
-            <Text fontWeight="600">
-              {user.displayName?.split(" ")[0] || ""}
-            </Text>
-            <Avatar
-              name={user.displayName || ""}
-              src={user.photoURL || ""}
-              size="sm"
-            />
-          </Flex>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverHeader>{user.displayName || ""}</PopoverHeader>
-          <PopoverBody>
-            <Button onClick={logOut}>Log Out</Button>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
+      <Flex
+        p="0.5rem"
+        _hover={{ bg: "rgba(0,0,0,0.5)", transition: "all 100ms" }}
+        cursor="pointer"
+        borderRadius="8px"
+      >
+        <Icon as={Menu} onClick={onOpen} color="white" />
+      </Flex>
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton mt="0.5rem" />
+          <DrawerHeader>Menu</DrawerHeader>
+
+          <DrawerBody p="0%">
+            <Flex flexDir="column" w="100%" p="1rem" justifyContent="center">
+              <Flex
+                gap="0.5rem"
+                alignItems="center"
+                p="0.5rem"
+                borderRadius="8px"
+                bg="rgba(0,0,0,0.2)"
+              >
+                <Avatar size="sm" src={user.photoURL || ""} />
+                <Text>{user.displayName}</Text>
+              </Flex>
+            </Flex>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <Flex flexDir="column" w="100%" gap="1rem">
+              <Button
+                onClick={() => router.push("/dashboard")}
+                w="100%"
+                colorScheme="blue"
+              >
+                Go to dashboard
+              </Button>
+              <Button onClick={logOut} w="100%" colorScheme="red">
+                Log Out
+              </Button>
+            </Flex>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Flex>
   );
 }
